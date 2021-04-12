@@ -14,14 +14,17 @@ const UserList = ({ items }) => {
     }
 
     return (
-        <ul className="users-list">
-            {items.map(user =>
-                <UserItem
-                    key={user.id}
-                    user={user}
-                />
-            )}
-        </ul>
+        <div>
+            <ul className="users-list">
+                {items.map(user =>
+                    <UserItem
+                        key={user.id}
+                        user={user}
+                    />
+                )}
+            </ul>
+        </div>
+
     )
 }
 
