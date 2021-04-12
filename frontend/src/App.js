@@ -1,8 +1,21 @@
-function App() {
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import Users from './user/pages/Users'
+import NewPlace from './places/pages/NewPlace'
+
+const App = () => {
   return (
-    <h1>
-      lets start
-    </h1>
+    <Router>
+      <Switch>
+        <Route path="/" exact>
+          <Users />
+        </Route>
+        <Route path="/places/new">
+          <NewPlace />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   );
 }
 
