@@ -2,6 +2,7 @@ import React from 'react'
 import './PlaceList.css'
 import Card from '../../Components/UIElements/Card'
 import PlaceItem from './PlaceItem'
+import { Link } from 'react-router-dom'
 
 const PlaceList = ({ items }) => {
 
@@ -10,7 +11,7 @@ const PlaceList = ({ items }) => {
             <div className="place-list center">
                 <Card>
                     <h2>No place found. Maybe create One? </h2>
-                    <button>Share Place</button>
+                    <Link className="btn btn-primary" to="/places/new">Share Place</Link>
                 </Card>
             </div>
         )

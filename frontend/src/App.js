@@ -6,6 +6,7 @@ import Navbar from './Components/Navigation/Navbar'
 import UserPlaces from './places/pages/UserPlaces'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import UpdatePlace from './places/pages/UpdatePlace'
+import Auth from './user/pages/Auth'
 
 const App = () => {
   return (
@@ -14,6 +15,9 @@ const App = () => {
       <Switch>
         <Route path="/" exact>
           <Users />
+        </Route>
+        <Route path="/auth">
+          <Auth />
         </Route>
         <Route path="/places/new" exact>
           <NewPlace />
