@@ -4,6 +4,8 @@ import Users from './user/pages/Users'
 import NewPlace from './places/pages/NewPlace'
 import Navbar from './Components/Navigation/Navbar'
 import UserPlaces from './places/pages/UserPlaces'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import UpdatePlace from './places/pages/UpdatePlace'
 
 const App = () => {
   return (
@@ -15,6 +17,9 @@ const App = () => {
         </Route>
         <Route path="/places/new" exact>
           <NewPlace />
+        </Route>
+        <Route path="/places/:placeId" >
+          <UpdatePlace />
         </Route>
         <Route path="/:userId/places">
           <UserPlaces />

@@ -1,35 +1,22 @@
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
+import { Navbar, Nav } from 'react-bootstrap'
 
-const Navbar = () => {
+const NavigationBar = () => {
     return (
-        <div>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container-fluid">
-                    <Link className="navbar-brand" to="/">YourPlaces</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ms-auto">
-                            <li className="nav-item ">
-                                <NavLink className="nav-link active" aria-current="page" to="/" exact>ALL USERS</NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to="/1/places">MY PLACE</NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to="/places/new">ADD PLACE</NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to="/auth">LOGIN/SIGN UP</NavLink>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </div>
+        <Navbar className="container" collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar.Brand to="/">YourPlaces</Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+                <Nav className="ml-auto">
+                    <NavLink className="nav-link" to="/" exact>ALL USERS</NavLink>
+                    <NavLink className="nav-link" to="/u1/places">MY PLACE</NavLink>
+                    <NavLink className="nav-link" to="/places/new">ADD PLACE</NavLink>
+                    <NavLink className="nav-link" to="/auth">AUTH</NavLink>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
     )
 }
 
-export default Navbar
+export default NavigationBar
