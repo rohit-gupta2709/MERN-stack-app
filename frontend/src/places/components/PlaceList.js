@@ -19,11 +19,13 @@ const PlaceList = ({ items }) => {
 
     return (
         <ul className="place-list">
-            {items.map(place =>
-                <PlaceItem
-                    key={place.id}
-                    place={place}
-                />)}
+            <div className="card-group">
+                {items.map(place =>
+                    <PlaceItem
+                        key={place.id}
+                        place={place}
+                    />)}
+            </div>
         </ul>
     )
 }

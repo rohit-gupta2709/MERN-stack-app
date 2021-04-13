@@ -1,27 +1,21 @@
 import React from 'react'
-import Card from '../../Components/UIElements/Card'
+import { Link } from 'react-router-dom'
 import './PlaceItem.css'
 
 const PlaceItem = ({ place }) => {
-    // console.log(place)
     return (
-        <li className="place-item">
-            <Card className="place-item__content">
-                <div className="place-item__image">
-                    <img src={place.image} alt={place.title} />
-                    <div className="place-item__info bg-primary">
-                        <h2>{place.title}</h2>
-                        <h3>{place.address}</h3>
-                        <p>{place.description}</p>
-                    </div>
-                    <div className="place-item__actions">
-                        <button>VIEW ON MAP</button>
-                        <button>EDIT</button>
-                        <button>DELETE</button>
-                    </div>
-                </div>
-            </Card>
-        </li>
+        <div className="card place-item">
+            <img className="card-img-top" src={place.image} alt={place.title} />
+            <div className="card-body">
+                <h5 className="card-title">{place.title}</h5>
+                <p className="card-text">{place.description}</p>
+                <p className="card-text">{place.address}</p>
+            </div>
+            <div className="card-body">
+                <Link to="#" className="card-link btn btn-warning">Edit</Link>
+                <Link to="#" className="card-link btn btn-danger">Delete</Link>
+            </div>
+        </div>
     )
 }
 

@@ -2,6 +2,10 @@
   margin: 1rem 0;
 }
 
+.card{
+  width: 18rem;
+}
+
 .place-item__content {
   padding: 0;
 }
