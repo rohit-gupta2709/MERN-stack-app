@@ -1,5 +1,6 @@
 const HttpError = require('../models/httpError')
 const { v4: uuidv4 } = require('uuid');
+const { validationResult } = require('express-validator')
 
 let DUMMY_PLACES = [
     {
@@ -39,6 +40,13 @@ const getPlacesByUserId = (req, res, next) => {
 }
 
 const createPlace = (req, res, next) => {
+
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        const error = new HttpError(`Data is Invalid`, 422)
+        return next(error)
+    }
+
     const { title, description, image, address, creatorId } = req.body
     const createdPlace = { id: uuidv4(), title, description, image, address, creatorId }
     DUMMY_PLACES.push(createdPlace)
@@ -46,6 +54,13 @@ const createPlace = (req, res, next) => {
 }
 
 const updatePlace = (req, res, next) => {
+
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        const error = new HttpError(`Data is Invalid`, 422)
+        return next(error)
+    }
+
     const placeId = req.params.placeId
     const place = DUMMY_PLACES.find(p => p.id === placeId)
     const creatorId = place.creatorId
@@ -53,6 +68,7 @@ const updatePlace = (req, res, next) => {
         const error = new HttpError('Place does not exist for this id', 404)
         return next(error)
     }
+
     const places = DUMMY_PLACES.filter(p => p.id !== placeId)
     const { title, description, image, address } = req.body
     const updatedPlace = { id: placeId, title, description, image, address, creatorId }

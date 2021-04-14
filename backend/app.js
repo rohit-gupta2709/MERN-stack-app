@@ -1,5 +1,4 @@
 const express = require('express')
-// const bodyParser = require('body-parser')
 const placesRoutes = require('./routes/placesRoutes')
 const userRoutes = require('./routes/userRoutes')
 
