@@ -1,11 +1,24 @@
 const express = require('express')
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
+const placesRoutes = require('./routes/placesRoutes')
+const userRoutes = require('./routes/userRoutes')
+
+const HttpError = require('./models/httpError')
 
 const app = express()
 
-const placesRoutes = require('./routes/placesRoutes')
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+
 
 app.use('/api/places', placesRoutes)
+app.use('/api/users', userRoutes)
+
+// middleware to handle unreachable routes
+app.use((req, res, next) => {
+    const error = new HttpError('Could not find this route', 404)
+    next(error)
+})
 
 //error middleware
 app.use((error, req, res, next) => {
