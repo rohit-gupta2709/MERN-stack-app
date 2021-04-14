@@ -1,6 +1,6 @@
 const HttpError = require('../models/httpError')
-const { v4: uuidv4 } = require('uuid');
 const { validationResult } = require('express-validator');
+const User = require('../models/User')
 
 let DUMMY_USERS = [
     {
@@ -21,24 +21,35 @@ const getUsers = (req, res, next) => {
     res.status(200).json(DUMMY_USERS)
 }
 
-const signUp = (req, res, next) => {
-
+const signUp = async (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        // console.log(errors.errors[0].msg)
         const error = new HttpError(`${errors.errors[0].param} ${errors.errors[0].msg}`, 422)
         return next(error)
     }
 
-    const { name, email, password } = req.body
+    const { name, email, password, places } = req.body
 
-    const existingUser = DUMMY_USERS.find(u => u.email === email)
+    let existingUser
+
+    try {
+        existingUser = await User.findOne({ email: email })
+    } catch (err) {
+        const error = new HttpError('sign up failed, try again later.', 404)
+        return next(error)
+    }
+
     if (existingUser) {
         const error = new HttpError('User exist with this email', 404)
         return next(error)
     }
-    const newUser = { id: uuidv4(), name, email, password }
-    DUMMY_USERS.push(newUser)
+
+    const user = new User({
+        name, email, password, places,
+        image: 'https://www.gardeningknowhow.com/wp-content/uploads/2020/12/lonely-japanese-cherry.jpg'
+    })
+
+    await user.save()
     res.status(201).json(newUser)
 }
 

@@ -2,6 +2,16 @@ const express = require('express')
 const placesRoutes = require('./routes/placesRoutes')
 const userRoutes = require('./routes/userRoutes')
 
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/MERN', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("connected to database")
+    })
+    .catch((error) => {
+        console.log("conncection refused")
+        console.log(error)
+    })
+
 const HttpError = require('./models/httpError')
 
 const app = express()
