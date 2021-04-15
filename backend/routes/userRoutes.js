@@ -13,6 +13,14 @@ router.post('/signup', [
         .matches(/\d/)
         .withMessage('must contain a number')
 ], signUp)
-router.post('/login', login)
+router.post('/login', [
+    check('email').normalizeEmail().isEmail(),
+    check('password')
+        .isLength({ min: 5 })
+        .withMessage('must be at least 5 chars long')
+        .matches(/\d/)
+        .withMessage('must contain a number')
+], login)
+
 
 module.exports = router

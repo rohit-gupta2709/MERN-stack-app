@@ -3,7 +3,9 @@ const placesRoutes = require('./routes/placesRoutes')
 const userRoutes = require('./routes/userRoutes')
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/MERN', { useNewUrlParser: true, useUnifiedTopology: true })
+const mongoURL = 'mongodb+srv://rohitgupta:password2709@cluster0.gj2zb.mongodb.net/mern?retryWrites=true&w=majority'
+// const localMONGO = 'mongodb://localhost:27017/MERN?retryWrites=true&w=majority'
+mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("connected to database")
     })

@@ -1,25 +1,8 @@
 const HttpError = require('../models/httpError')
 const { validationResult } = require('express-validator')
 const Place = require('../models/Place')
-
-let DUMMY_PLACES = [
-    {
-        id: 'p1',
-        title: 'EMPIRE STATE BUILDING',
-        description: 'One of the most famaous sky scrapers in the world',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Empire_State_Building_%28aerial_view%29.jpg',
-        address: '20 W 34th St, New York, Ny 10001',
-        creatorId: 'u1'
-    },
-    {
-        id: 'p2',
-        title: 'EMPIRE STATE BUILDING',
-        description: 'One of the most famaous sky scrapers in the world',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Empire_State_Building_%28aerial_view%29.jpg',
-        address: '20 W 34th St, New York, Ny 10001',
-        creatorId: 'u2'
-    }
-]
+const User = require('../models/User')
+const mongoose = require('mongoose');
 
 const getPlaceById = async (req, res, next) => {
     let place
@@ -66,15 +49,34 @@ const createPlace = async (req, res, next) => {
     const createdPlace = new Place({
         title,
         description,
-        image: 'https://iso.500px.com/wp-content/uploads/2014/07/big-one.jpg',
+        image,
         address,
         creator: creatorId
     })
 
+    let user
     try {
-        await createdPlace.save()
+        user = await User.findById(creatorId)
     } catch (err) {
         const error = new HttpError('Creating place failed try again', 500)
+        return next(error)
+    }
+    if (!user) {
+        const error = new HttpError('Cannot find user for provided id', 404)
+        return next(error)
+    }
+
+    try {
+        const SESSION = await mongoose.startSession()
+        SESSION.startTransaction()
+        await createdPlace.save({ session: SESSION })
+        user.places.push(createdPlace)
+        await user.save({ session: SESSION })
+        await SESSION.commitTransaction()
+
+    } catch (err) {
+        console.log(err)
+        const error = new HttpError('Creating place cannot failed try again', 500)
         return next(error)
     }
 
@@ -113,7 +115,6 @@ const updatePlace = async (req, res, next) => {
 
 const deletePlace = async (req, res, next) => {
     const placeId = req.params.placeId
-
     let place
     try {
         place = await Place.findByIdAndDelete(placeId)

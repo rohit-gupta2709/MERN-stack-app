@@ -6,7 +6,11 @@ const placeSchema = new schema({
     description: { type: String, required: true },
     image: { type: String, required: true },
     address: { type: String, required: true },
-    creator: { type: String, required: true }
+    creator: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
 })
 
 module.exports = mongoose.model('Place', placeSchema)
