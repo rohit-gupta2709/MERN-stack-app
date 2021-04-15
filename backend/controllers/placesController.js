@@ -22,19 +22,19 @@ const getPlaceById = async (req, res, next) => {
 
 const getPlacesByUserId = async (req, res, next) => {
 
-    let places
+    let userWithPlaces
     try {
-        places = await Place.find({ creator: req.params.userId })
+        userWithPlaces = await User.findById(req.params.userId).populate('places')
     } catch (err) {
         const error = new HttpError('Cannot find places for this user', 500)
         return next(error)
     }
 
-    if (!places || places.length === 0) {
+    if (!userWithPlaces || userWithPlaces.places.length === 0) {
         const error = new HttpError('User does not exist for this id', 404)
         return next(error)
     }
-    res.json(places)
+    res.json(userWithPlaces.places)
 }
 
 const createPlace = async (req, res, next) => {
@@ -117,13 +117,20 @@ const deletePlace = async (req, res, next) => {
     const placeId = req.params.placeId
     let place
     try {
-        place = await Place.findByIdAndDelete(placeId)
+        place = await Place.findById(placeId)
     } catch (err) {
         const error = new HttpError('Place does not exist for this id in the database', 404)
         return next(error)
     }
     if (!place) {
         const error = new HttpError('Place does not exist for this id', 404)
+        return next(error)
+    }
+    try {
+        await User.findByIdAndUpdate(place.creator, { $pull: { places: placeId } });
+        await place.remove()
+    } catch (err) {
+        const error = new HttpError('Error deleting place for this id', 404)
         return next(error)
     }
 
