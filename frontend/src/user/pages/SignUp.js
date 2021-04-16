@@ -1,14 +1,14 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Form, Col, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { AuthContext } from '../../context/authContext'
 
-const Auth = () => {
-    const auth = useContext(AuthContext)
+const SignUp = () => {
+
     const [validated, setValidated] = useState(false);
 
     const [email, setemail] = useState('');
     const [password, setpassword] = useState('');
+    const [name, setname] = useState('');
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -16,11 +16,9 @@ const Auth = () => {
             event.preventDefault();
             event.stopPropagation();
         }
-        else {
-            auth.login()
-        }
         console.log(email)
         console.log(password)
+        console.log(name)
         event.preventDefault();
         setValidated(true);
     };
@@ -31,10 +29,23 @@ const Auth = () => {
     const passwordHandler = (event) => {
         setpassword(event.target.value)
     }
+    const nameHandler = (event) => {
+        setname(event.target.value)
+    }
 
     return (
         <>
             <Form noValidate validated={validated} className="container" onSubmit={handleSubmit}>
+                <Form.Row>
+                    <Form.Group as={Col} md="6" controlId="validationCustom02">
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control type="text" placeholder="Name" required onChange={nameHandler} />
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a valid name.
+                        </Form.Control.Feedback>
+                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    </Form.Group>
+                </Form.Row>
                 <Form.Row>
                     <Form.Group as={Col} md="4" controlId="validationCustom01">
                         <Form.Label>Email</Form.Label>
@@ -60,11 +71,11 @@ const Auth = () => {
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
                 </Form.Row>
-                <Button type="submit">Sign In</Button>
+                <Button type="submit">Sign Up</Button>
             </Form>
-            <Link to="/auth/signup" >Sign Up</Link>
+            <Link to="/auth" >Login</Link>
         </>
     )
 }
 
-export default Auth
+export default SignUp

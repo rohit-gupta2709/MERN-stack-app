@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Form, Button, Col, InputGroup } from 'react-bootstrap'
+import { Redirect } from 'react-router'
+import { AuthContext } from '../../context/authContext'
 
 const NewPlace = () => {
-
+    const auth = useContext(AuthContext)
     const [validated, setValidated] = useState(false);
 
     const [title, setTitle] = useState('');
@@ -43,6 +45,7 @@ const NewPlace = () => {
 
     return (
         <div>
+            {!auth.isLoggedIn && (<Redirect to="/auth" />)}
             <Form className="container" noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Row>
                     <Form.Group as={Col} md="4" controlId="validationCustom01">
