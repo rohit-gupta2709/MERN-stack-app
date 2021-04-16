@@ -30,7 +30,7 @@ const getPlacesByUserId = async (req, res, next) => {
         return next(error)
     }
 
-    if (!userWithPlaces || userWithPlaces.places.length === 0) {
+    if (!userWithPlaces) {
         const error = new HttpError('User does not exist for this id', 404)
         return next(error)
     }
@@ -97,7 +97,7 @@ const updatePlace = async (req, res, next) => {
     let updatedPlace
 
     try {
-        updatedPlace = await Place.findByIdAndUpdate(placeId, { title, description, image, address, creator: 'u1' })
+        updatedPlace = await Place.findByIdAndUpdate(placeId, { title, description, image, address })
     } catch (err) {
         const error = new HttpError('Place does not exist for this id in database', 404)
         return next(error)

@@ -1,27 +1,47 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Form, Col, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
+import Loader from "../../Components/UIElements/Loader";
+import ErrorModal from "../../Components/UIElements/ErrorModal";
+import { useHttpHook } from '../../Components/Hooks/HttpHook'
 
-const Auth = () => {
+const Auth = ({ redirect = '/', history }) => {
     const auth = useContext(AuthContext)
     const [validated, setValidated] = useState(false);
+
+    const { loading, error, sendRequest, clearError } = useHttpHook()
+
+    useEffect(() => {
+        if (auth.isLoggedIn) {
+            history.push(redirect)
+        }
+    }, [history, auth.isLoggedIn, redirect])
 
     const [email, setemail] = useState('');
     const [password, setpassword] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
-            event.preventDefault();
             event.stopPropagation();
         }
         else {
-            auth.login()
+            try {
+                const responseData = await sendRequest(
+                    'http://localhost:5000/api/users/login',
+                    'POST',
+                    JSON.stringify({
+                        email, password
+                    }),
+                    {
+                        'Content-Type': 'application/json'
+                    }
+                )
+                auth.login(responseData._id)
+            } catch (err) { }
         }
-        console.log(email)
-        console.log(password)
-        event.preventDefault();
         setValidated(true);
     };
 
@@ -34,6 +54,8 @@ const Auth = () => {
 
     return (
         <>
+            {loading && <Loader />}
+            {error && <ErrorModal message={error} changeError={clearError} />}
             <Form noValidate validated={validated} className="container" onSubmit={handleSubmit}>
                 <Form.Row>
                     <Form.Group as={Col} md="4" controlId="validationCustom01">

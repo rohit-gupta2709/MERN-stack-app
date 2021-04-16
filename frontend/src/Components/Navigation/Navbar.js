@@ -12,7 +12,7 @@ const NavigationBar = () => {
             <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav className="ml-auto">
                     <NavLink className="nav-link" to="/" exact>ALL USERS</NavLink>
-                    {auth.isLoggedIn && (<NavLink className="nav-link" to="/u1/places">MY PLACE</NavLink>)}
+                    {auth.isLoggedIn && (<NavLink className="nav-link" to={`/${auth.userId}/places`} >MY PLACE</NavLink>)}
                     <NavLink className="nav-link" to="/places/new">ADD PLACE</NavLink>
                     {!auth.isLoggedIn && (<NavLink className="nav-link" to="/auth">AUTH</NavLink>)}
                     {auth.isLoggedIn && (<NavLink className="nav-link" onClick={auth.logout} to="/">LOGOUT</NavLink>)}

@@ -1,25 +1,48 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Form, Col, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
+import { AuthContext } from '../../context/authContext'
+import Loader from "../../Components/UIElements/Loader";
+import ErrorModal from "../../Components/UIElements/ErrorModal";
+import { useHttpHook } from '../../Components/Hooks/HttpHook'
 
-const SignUp = () => {
-
+const SignUp = ({ redirect = '/' }) => {
+    const auth = useContext(AuthContext)
+    let history = useHistory()
     const [validated, setValidated] = useState(false);
+
+    const { loading, error, sendRequest, clearError } = useHttpHook()
+
+    useEffect(() => {
+        if (auth.isLoggedIn) {
+            history.push(redirect)
+        }
+    }, [history, auth.isLoggedIn, redirect])
 
     const [email, setemail] = useState('');
     const [password, setpassword] = useState('');
     const [name, setname] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
-            event.preventDefault();
             event.stopPropagation();
+        } else {
+            try {
+                const responseData = await sendRequest(
+                    'http://localhost:5000/api/users/signup',
+                    'POST',
+                    JSON.stringify({
+                        name, email, password
+                    }),
+                    {
+                        'Content-Type': 'application/json'
+                    }
+                )
+                auth.login(responseData._id)
+            } catch (err) { }
         }
-        console.log(email)
-        console.log(password)
-        console.log(name)
-        event.preventDefault();
         setValidated(true);
     };
 
@@ -35,6 +58,8 @@ const SignUp = () => {
 
     return (
         <>
+            {loading && <Loader />}
+            {error && <ErrorModal message={error} changeError={clearError} />}
             <Form noValidate validated={validated} className="container" onSubmit={handleSubmit}>
                 <Form.Row>
                     <Form.Group as={Col} md="6" controlId="validationCustom02">

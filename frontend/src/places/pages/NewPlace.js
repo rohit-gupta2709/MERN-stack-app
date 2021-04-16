@@ -2,32 +2,45 @@ import React, { useState, useContext } from 'react'
 import { Form, Button, Col, InputGroup } from 'react-bootstrap'
 import { Redirect } from 'react-router'
 import { AuthContext } from '../../context/authContext'
+import { useHttpHook } from '../../Components/Hooks/HttpHook'
+import Loader from '../../Components/UIElements/Loader'
+import ErrorModal from '../../Components/UIElements/ErrorModal'
+import { useHistory } from 'react-router-dom'
 
 const NewPlace = () => {
     const auth = useContext(AuthContext)
     const [validated, setValidated] = useState(false);
+
+    const history = useHistory()
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState('');
     const [address, setAddress] = useState('');
 
+    const { loading, error, sendRequest, clearError } = useHttpHook()
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
-            event.preventDefault();
             event.stopPropagation();
         }
         setValidated(true);
-        event.preventDefault();
-        const Data = {
-            newtitle: title,
-            newdescription: description,
-            newimage: image,
-            newaddress: address
-        }
-        console.log(Data)
+        try {
+            await sendRequest(
+                'http://localhost:5000/api/places',
+                'POST',
+                JSON.stringify({
+                    title, description, address, image,
+                    creatorId: auth.userId
+                }),
+                {
+                    'Content-Type': 'application/json'
+                }
+            )
+            history.push('/')
+        } catch (err) { }
     };
 
     const titleHandler = (event) => {
@@ -44,8 +57,10 @@ const NewPlace = () => {
     }
 
     return (
-        <div>
+        <>
             {!auth.isLoggedIn && (<Redirect to="/auth" />)}
+            {loading && <Loader />}
+            {error && <ErrorModal message={error} changeError={clearError} />}
             <Form className="container" noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Row>
                     <Form.Group as={Col} md="4" controlId="validationCustom01">
@@ -111,7 +126,7 @@ const NewPlace = () => {
                 </Form.Group> */}
                 <Button type="submit">Submit form</Button>
             </Form>
-        </div>
+        </>
     )
 }
 

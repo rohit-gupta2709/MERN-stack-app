@@ -18,7 +18,7 @@ const UserList = ({ items }) => {
             <ul className="users-list">
                 {items.map(user =>
                     <UserItem
-                        key={user.id}
+                        key={user._id}
                         user={user}
                     />
                 )}

@@ -5,7 +5,7 @@ const User = require('../models/User')
 const getUsers = async (req, res, next) => {
     let users
     try {
-        users = await User.find({}, 'email name') // User.find({}, '-password)
+        users = await User.find({}, '-password')
     } catch (err) {
         const error = new HttpError('Cannot fetch users, try again later.', 400)
         return next(error)
@@ -39,7 +39,7 @@ const signUp = async (req, res, next) => {
     const user = new User({
         name, email, password,
         places: [],
-        image: 'https://www.gardeningknowhow.com/wp-content/uploads/2020/12/lonely-japanese-cherry.jpg'
+        image: 'https://image.freepik.com/free-vector/businessman-character-avatar-icon-vector-illustration-design_24877-18271.jpg'
     })
 
     await user.save()

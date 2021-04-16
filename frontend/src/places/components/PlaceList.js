@@ -4,7 +4,7 @@ import Card from '../../Components/UIElements/Card'
 import PlaceItem from './PlaceItem'
 import { Link } from 'react-router-dom'
 
-const PlaceList = ({ items }) => {
+const PlaceList = ({ items, deletePlace }) => {
 
     if (items.length === 0) {
         return (
@@ -22,8 +22,9 @@ const PlaceList = ({ items }) => {
             <div className="card-group">
                 {items.map(place =>
                     <PlaceItem
-                        key={place.id}
+                        key={place._id}
                         place={place}
+                        deletePlace={deletePlace}
                     />)}
             </div>
         </ul>

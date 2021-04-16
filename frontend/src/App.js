@@ -13,18 +13,22 @@ import { AuthContext } from './context/authContext'
 const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userId, setUserId] = useState()
 
-  const login = useCallback(() => {
+  const login = useCallback((uid) => {
     setIsLoggedIn(true)
+    setUserId(uid)
   }, [])
 
   const logout = useCallback(() => {
     setIsLoggedIn(false)
+    setUserId(null)
   }, [])
 
   return (
     <AuthContext.Provider value={{
       isLoggedIn: isLoggedIn,
+      userId: userId,
       login: login,
       logout: logout
     }}>
@@ -34,9 +38,7 @@ const App = () => {
           <Route path="/" exact>
             <Users />
           </Route>
-          <Route path="/auth" exact>
-            <Auth />
-          </Route>
+          <Route path="/auth" exact component={Auth} />
           <Route path="/auth/signup" exact>
             <SignUp />
           </Route>

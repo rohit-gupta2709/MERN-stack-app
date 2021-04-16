@@ -1,19 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import UserList from '../components/UserList'
+import Loader from '../../Components/UIElements/Loader'
+import ErrorModal from '../../Components/UIElements/ErrorModal'
+import { useHttpHook } from '../../Components/Hooks/HttpHook'
 
 const Users = () => {
 
-    const USERS = [
-        {
-            id: 'u1',
-            name: 'Rohit',
-            image: 'https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg',
-            placeCount: 3
+    const [loadedUsers, setloadedUsers] = useState()
+    const { loading, error, sendRequest, clearError } = useHttpHook()
+
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const responseData = await sendRequest('http://localhost:5000/api/users')
+                setloadedUsers(responseData)
+            } catch (err) { }
         }
-    ]
+        fetchUsers()
+    }, [sendRequest])
 
     return (
-        <UserList items={USERS} />
+        <>
+            {loading && (
+                <div className="center">
+                    <Loader />
+                </div>)}
+            {error && <ErrorModal message={error} changeError={clearError} />}
+            {!loading && loadedUsers && (<UserList items={loadedUsers} />)}
+        </>
     )
 }
 
