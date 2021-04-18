@@ -123,9 +123,10 @@ const updatePlace = async (req, res, next) => {
         return next(error)
     }
 
-    updatePlace.title = title
-    updatePlace.description = description
-    updatePlace.address = address
+    console.log(description)
+    updatedPlace.title = title
+    updatedPlace.description = description
+    updatedPlace.address = address
 
     updatedPlace.save()
 

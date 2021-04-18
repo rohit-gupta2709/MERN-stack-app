@@ -30,6 +30,7 @@ const UpdatePlace = () => {
     }, [sendRequest, placeId])
 
     useEffect(() => {
+        console.log('in use Efffect')
         setAddress(place.address)
         setDescription(place.description)
         setTitle(place.title)
@@ -52,6 +53,7 @@ const UpdatePlace = () => {
         }
         setValidated(true);
         try {
+            console.log(description)
             await sendRequest(
                 process.env.REACT_APP_BACKEND_URL + `/places/${placeId}`,
                 'PATCH',
@@ -63,6 +65,7 @@ const UpdatePlace = () => {
                     Authorization: 'Bearor ' + auth.token
                 }
             )
+            console.log(description)
             history.push('/' + auth.userId + '/places')
         } catch (err) { }
     };
