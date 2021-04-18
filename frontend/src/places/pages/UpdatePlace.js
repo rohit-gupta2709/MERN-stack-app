@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { Form, Button, Col, InputGroup } from 'react-bootstrap'
+import { Form, Button, Col } from 'react-bootstrap'
 import { useHttpHook } from '../../Components/Hooks/HttpHook'
 import Loader from '../../Components/UIElements/Loader'
 import ErrorModal from '../../Components/UIElements/ErrorModal'
@@ -59,7 +59,8 @@ const UpdatePlace = () => {
                     title, description, address,
                 }),
                 {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearor ' + auth.token
                 }
             )
             history.push('/' + auth.userId + '/places')

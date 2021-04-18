@@ -22,7 +22,11 @@ const PlaceItem = ({ place, deletePlace }) => {
         try {
             await sendRequest(
                 `http://localhost:5000/api/places/${place._id}`,
-                'DELETE'
+                'DELETE',
+                null,
+                {
+                    Authorization: 'Bearor ' + auth.token
+                }
             )
             deletePlace(place._id)
         } catch (err) { }

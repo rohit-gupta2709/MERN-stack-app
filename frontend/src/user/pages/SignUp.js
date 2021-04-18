@@ -54,7 +54,7 @@ const SignUp = ({ redirect = '/' }) => {
                     'POST',
                     formData
                 )
-                auth.login(responseData._id)
+                auth.login(responseData.userId, responseData.token)
                 history.push('/')
             } catch (err) { }
         }

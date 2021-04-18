@@ -46,12 +46,14 @@ const NewPlace = () => {
             formData.append('title', title)
             formData.append('description', description)
             formData.append('address', address)
-            formData.append('creatorId', auth.userId)
             formData.append('image', files)
-            const responsedata = await sendRequest(
+            await sendRequest(
                 'http://localhost:5000/api/places',
                 'POST',
-                formData
+                formData,
+                {
+                    Authorization: 'Bearer ' + auth.token
+                }
             )
             history.push('/')
         } catch (err) { }

@@ -39,7 +39,7 @@ const Auth = ({ redirect = '/', history }) => {
                         'Content-Type': 'application/json'
                     }
                 )
-                auth.login(responseData._id)
+                auth.login(responseData.userId, responseData.token)
             } catch (err) { }
         }
         setValidated(true);

@@ -49,7 +49,7 @@ const createPlace = async (req, res, next) => {
         return next(error)
     }
 
-    const { title, description, address, creatorId } = req.body
+    const { title, description, address } = req.body
     const createdPlace = new Place({
         title,
         description,
@@ -58,12 +58,12 @@ const createPlace = async (req, res, next) => {
             filename: req.file.filename
         },
         address,
-        creator: creatorId
+        creator: req.userData.userId
     })
 
     let user
     try {
-        user = await User.findById(creatorId)
+        user = await User.findById(req.userData.userId)
     } catch (err) {
         const error = new HttpError('Creating place failed try again', 500)
         await cloudinary.uploader.destroy(req.file.filename)
@@ -107,7 +107,7 @@ const updatePlace = async (req, res, next) => {
     let updatedPlace
 
     try {
-        updatedPlace = await Place.findByIdAndUpdate(placeId, { title, description, address })
+        updatedPlace = await Place.findById(placeId)
     } catch (err) {
         const error = new HttpError('Place does not exist for this id in database', 404)
         return next(error)
@@ -117,6 +117,15 @@ const updatePlace = async (req, res, next) => {
         const error = new HttpError('Place does not exist for this id', 404)
         return next(error)
     }
+
+    if (updatedPlace.creator.toString() !== req.userData) {
+        const error = new HttpError('not authorized ', 401)
+        return next(error)
+    }
+
+    updatePlace.title = title
+    updatePlace.description = description
+    updatePlace.address = address
 
     updatedPlace.save()
 
@@ -134,6 +143,10 @@ const deletePlace = async (req, res, next) => {
     }
     if (!place) {
         const error = new HttpError('Place does not exist for this id', 404)
+        return next(error)
+    }
+    if (place.creator.toString() !== req.userData) {
+        const error = new HttpError('not authorized ', 401)
         return next(error)
     }
     try {
