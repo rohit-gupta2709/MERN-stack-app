@@ -21,7 +21,7 @@ const PlaceItem = ({ place, deletePlace }) => {
         setShow(false)
         try {
             await sendRequest(
-                `http://localhost:5000/api/places/${place._id}`,
+                process.env.REACT_APP_BACKEND_URL + `/places/${place._id}`,
                 'DELETE',
                 null,
                 {

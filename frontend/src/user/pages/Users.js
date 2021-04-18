@@ -9,11 +9,12 @@ const Users = () => {
     const [loadedUsers, setloadedUsers] = useState()
     const { loading, error, sendRequest, clearError } = useHttpHook()
 
+    console.log(process.env.REACT_APP_BACKEND_URL)
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const responseData = await sendRequest('http://localhost:5000/api/users')
+                const responseData = await sendRequest(process.env.REACT_APP_BACKEND_URL + '/users')
                 setloadedUsers(responseData)
             } catch (err) { }
         }

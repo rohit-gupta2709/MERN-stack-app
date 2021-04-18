@@ -71,7 +71,7 @@ const signUp = async (req, res, next) => {
         token = jwt.sign({
             userId: user._id,
             email: user.email
-        }, 'super_secret_dont_share',
+        }, process.env.JWT_KEY,
             { expiresIn: '24h' })
     } catch (err) {
         const error = new HttpError('could not create token', 500)
@@ -122,7 +122,7 @@ const login = async (req, res, next) => {
         token = jwt.sign({
             userId: existingUser._id,
             email: existingUser.email
-        }, 'super_secret_dont_share',
+        }, process.env.JWT_KEY,
             { expiresIn: '24h' })
     } catch (err) {
         const error = new HttpError('could not create token', 500)

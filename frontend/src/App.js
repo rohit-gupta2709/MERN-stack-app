@@ -14,6 +14,7 @@ import { useAuth } from './Components/Hooks/auth-hook'
 const App = () => {
 
   const { token, login, logout, userId } = useAuth();
+  console.log(process.env)
 
   return (
     <AuthContext.Provider value={{
