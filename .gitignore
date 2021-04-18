@@ -15,6 +15,7 @@ node_modules/
 
 # misc
 .env
+.env.production
 # /frontend/.env
 .DS_Store
 .env.local
