@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const placesRoutes = require('./routes/placesRoutes')
 const userRoutes = require('./routes/userRoutes')
+const path = require('path')
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -30,8 +31,17 @@ app.use((req, res, next) => {
     next()
 })
 
+// app.use(express.static(path.join('build')))
+
 app.use('/api/places', placesRoutes)
 app.use('/api/users', userRoutes)
+
+// if (process.env.NODE_ENV === 'production') {
+app.use(express.static(path.join(__dirname, 'build')))
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+})
+// }
 
 // middleware to handle unreachable routes
 app.use((req, res, next) => {
