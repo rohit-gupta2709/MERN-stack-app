@@ -4,7 +4,11 @@ const schema = mongoose.Schema;
 const placeSchema = new schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
-    image: { type: String, required: true },
+    image: {
+        url: String,
+        filename: String,
+        // required: true
+    },
     address: { type: String, required: true },
     creator: {
         type: mongoose.Types.ObjectId,

@@ -2,10 +2,12 @@ const express = require('express')
 const router = express.Router()
 const { getPlaceById, getPlacesByUserId, createPlace, updatePlace, deletePlace } = require('../controllers/placesController')
 const { check } = require('express-validator')
+const upload = require('../middlewares/multer')
 
 router.get('/user/:userId', getPlacesByUserId)
 
-router.post('/', [
+router.post('/',
+    upload.single('image'), [
     check('title').not().isEmpty(),
     check('description').not().isEmpty().isLength({ min: 5 }),
     check('address').not().isEmpty()

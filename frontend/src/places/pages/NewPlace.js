@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Form, Button, Col, InputGroup } from 'react-bootstrap'
 import { Redirect } from 'react-router'
 import { AuthContext } from '../../context/authContext'
@@ -15,8 +15,22 @@ const NewPlace = () => {
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState('');
     const [address, setAddress] = useState('');
+    const [files, setFiles] = useState();
+    const [previewUrl, setpreviewUrl] = useState();
+
+
+    useEffect(() => {
+        if (!files) {
+            setpreviewUrl(null)
+            return
+        }
+        const fileReader = new FileReader()
+        fileReader.onload = () => {
+            setpreviewUrl(fileReader.result)
+        }
+        fileReader.readAsDataURL(files)
+    }, [files])
 
     const { loading, error, sendRequest, clearError } = useHttpHook()
 
@@ -28,16 +42,16 @@ const NewPlace = () => {
         }
         setValidated(true);
         try {
-            await sendRequest(
+            const formData = new FormData()
+            formData.append('title', title)
+            formData.append('description', description)
+            formData.append('address', address)
+            formData.append('creatorId', auth.userId)
+            formData.append('image', files)
+            const responsedata = await sendRequest(
                 'http://localhost:5000/api/places',
                 'POST',
-                JSON.stringify({
-                    title, description, address, image,
-                    creatorId: auth.userId
-                }),
-                {
-                    'Content-Type': 'application/json'
-                }
+                formData
             )
             history.push('/')
         } catch (err) { }
@@ -50,7 +64,7 @@ const NewPlace = () => {
         setDescription(event.target.value)
     }
     const imageHandler = (event) => {
-        setImage(event.target.value)
+        setFiles(event.target.files[0])
     }
     const addressHandler = (event) => {
         setAddress(event.target.value)
@@ -92,20 +106,23 @@ const NewPlace = () => {
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md="4" controlId="validationCustomUsername">
-                        <Form.Label>Image URL</Form.Label>
+                        <Form.Label>Image</Form.Label>
                         <InputGroup hasValidation>
                             <Form.Control
-                                type="url"
-                                placeholder="image URL"
+                                type="file"
+                                placeholder="CHOOSE IMAGE"
                                 required
+                                name='image'
                                 onChange={imageHandler}
+                                accept=".jpg,.jpeg,.png"
                             />
                             <Form.Control.Feedback type="invalid">
-                                Invalid URL
+                                Invalid image types
                             </Form.Control.Feedback>
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </InputGroup>
                     </Form.Group>
+                    {previewUrl && (<img src={previewUrl} alt="file" />)}
                 </Form.Row>
                 <Form.Row>
                     <Form.Group as={Col} md="6" controlId="validationCustom03">
@@ -117,13 +134,6 @@ const NewPlace = () => {
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
                 </Form.Row>
-                {/* <Form.Group>
-                    <Form.Check
-                        required
-                        label="Agree to terms and conditions"
-                        feedback="You must agree before submitting."
-                    />
-                </Form.Group> */}
                 <Button type="submit">Submit form</Button>
             </Form>
         </>

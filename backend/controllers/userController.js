@@ -1,6 +1,7 @@
 const HttpError = require('../models/httpError')
 const { validationResult } = require('express-validator');
 const User = require('../models/User')
+const { cloudinary } = require('../Cloudinary/cloudinary')
 
 const getUsers = async (req, res, next) => {
     let users
@@ -14,8 +15,13 @@ const getUsers = async (req, res, next) => {
 }
 
 const signUp = async (req, res, next) => {
+
+    console.log(req.body)
+    console.log(req.file)
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
+        if (req.file)
+            await cloudinary.uploader.destroy(req.file.filename)
         const error = new HttpError(`${errors.errors[0].param} ${errors.errors[0].msg}`, 422)
         return next(error)
     }
@@ -27,11 +33,15 @@ const signUp = async (req, res, next) => {
     try {
         existingUser = await User.findOne({ email: email })
     } catch (err) {
+        if (req.file)
+            await cloudinary.uploader.destroy(req.file.filename)
         const error = new HttpError('sign up failed, try again later.', 404)
         return next(error)
     }
 
     if (existingUser) {
+        if (req.file)
+            await cloudinary.uploader.destroy(req.file.filename)
         const error = new HttpError('User exist with this email', 404)
         return next(error)
     }
@@ -39,7 +49,10 @@ const signUp = async (req, res, next) => {
     const user = new User({
         name, email, password,
         places: [],
-        image: 'https://image.freepik.com/free-vector/businessman-character-avatar-icon-vector-illustration-design_24877-18271.jpg'
+        image: {
+            url: req.file.path,
+            filename: req.file.filename
+        },
     })
 
     await user.save()

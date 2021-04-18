@@ -31,7 +31,6 @@ const UpdatePlace = () => {
 
     useEffect(() => {
         setAddress(place.address)
-        setImage(place.image)
         setDescription(place.description)
         setTitle(place.title)
     }, [place])
@@ -42,7 +41,6 @@ const UpdatePlace = () => {
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState('');
     const [address, setAddress] = useState('');
 
 
@@ -58,7 +56,7 @@ const UpdatePlace = () => {
                 `http://localhost:5000/api/places/${placeId}`,
                 'PATCH',
                 JSON.stringify({
-                    title, description, address, image,
+                    title, description, address,
                 }),
                 {
                     'Content-Type': 'application/json'
@@ -73,9 +71,6 @@ const UpdatePlace = () => {
     }
     const descriptionHandler = (event) => {
         setDescription(event.target.value)
-    }
-    const imageHandler = (event) => {
-        setImage(event.target.value)
     }
     const addressHandler = (event) => {
         setAddress(event.target.value)
@@ -119,22 +114,6 @@ const UpdatePlace = () => {
                                 Description cannot be empty.
                         </Form.Control.Feedback>
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group as={Col} md="4" controlId="validationCustomUsername">
-                            <Form.Label>Image URL</Form.Label>
-                            <InputGroup hasValidation>
-                                <Form.Control
-                                    type="url"
-                                    placeholder="image URL"
-                                    required
-                                    value={image}
-                                    onChange={imageHandler}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Invalid URL
-                            </Form.Control.Feedback>
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                            </InputGroup>
                         </Form.Group>
                     </Form.Row>
                     <Form.Row>

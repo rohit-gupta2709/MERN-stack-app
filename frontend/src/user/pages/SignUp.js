@@ -8,7 +8,7 @@ import { useHttpHook } from '../../Components/Hooks/HttpHook'
 
 const SignUp = ({ redirect = '/' }) => {
     const auth = useContext(AuthContext)
-    let history = useHistory()
+    const history = useHistory()
     const [validated, setValidated] = useState(false);
 
     const { loading, error, sendRequest, clearError } = useHttpHook()
@@ -22,6 +22,20 @@ const SignUp = ({ redirect = '/' }) => {
     const [email, setemail] = useState('');
     const [password, setpassword] = useState('');
     const [name, setname] = useState('');
+    const [files, setFiles] = useState();
+    const [previewUrl, setpreviewUrl] = useState();
+
+    useEffect(() => {
+        if (!files) {
+            setpreviewUrl(null)
+            return
+        }
+        const fileReader = new FileReader()
+        fileReader.onload = () => {
+            setpreviewUrl(fileReader.result)
+        }
+        fileReader.readAsDataURL(files)
+    }, [files])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -30,17 +44,18 @@ const SignUp = ({ redirect = '/' }) => {
             event.stopPropagation();
         } else {
             try {
+                const formData = new FormData()
+                formData.append('email', email)
+                formData.append('password', password)
+                formData.append('name', name)
+                formData.append('image', files)
                 const responseData = await sendRequest(
                     'http://localhost:5000/api/users/signup',
                     'POST',
-                    JSON.stringify({
-                        name, email, password
-                    }),
-                    {
-                        'Content-Type': 'application/json'
-                    }
+                    formData
                 )
                 auth.login(responseData._id)
+                history.push('/')
             } catch (err) { }
         }
         setValidated(true);
@@ -54,6 +69,9 @@ const SignUp = ({ redirect = '/' }) => {
     }
     const nameHandler = (event) => {
         setname(event.target.value)
+    }
+    const imageHandler = (event) => {
+        setFiles(event.target.files[0])
     }
 
     return (
@@ -95,6 +113,24 @@ const SignUp = ({ redirect = '/' }) => {
                     </Form.Control.Feedback>
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col} md="4" controlId="validationCustomUsername">
+                        <Form.Label>Image</Form.Label>
+                        <Form.Control
+                            type="file"
+                            placeholder="CHOOSE IMAGE"
+                            required
+                            name='image'
+                            onChange={imageHandler}
+                            accept=".jpg,.jpeg,.png"
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            Invalid image types
+                            </Form.Control.Feedback>
+                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    </Form.Group>
+                    {previewUrl && (<img src={previewUrl} alt="file" />)}
                 </Form.Row>
                 <Button type="submit">Sign Up</Button>
             </Form>

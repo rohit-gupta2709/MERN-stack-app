@@ -1,11 +1,13 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+
 const express = require('express')
 const placesRoutes = require('./routes/placesRoutes')
 const userRoutes = require('./routes/userRoutes')
 
 const mongoose = require('mongoose');
-const mongoURL = 'mongodb+srv://rohitgupta:password2709@cluster0.gj2zb.mongodb.net/mern?retryWrites=true&w=majority'
-// const localMONGO = 'mongodb://localhost:27017/MERN?retryWrites=true&w=majority'
-mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("connected to database")
     })

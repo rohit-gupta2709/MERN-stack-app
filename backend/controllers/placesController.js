@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator')
 const Place = require('../models/Place')
 const User = require('../models/User')
 const mongoose = require('mongoose');
+const { cloudinary } = require('../Cloudinary/cloudinary')
 
 const getPlaceById = async (req, res, next) => {
     let place
@@ -39,17 +40,23 @@ const getPlacesByUserId = async (req, res, next) => {
 
 const createPlace = async (req, res, next) => {
 
+    console.log(req.body, req.file)
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         const error = new HttpError(`Data is Invalid`, 422)
+        if (req.file)
+            await cloudinary.uploader.destroy(req.file.filename)
         return next(error)
     }
 
-    const { title, description, image, address, creatorId } = req.body
+    const { title, description, address, creatorId } = req.body
     const createdPlace = new Place({
         title,
         description,
-        image,
+        image: {
+            url: req.file.path,
+            filename: req.file.filename
+        },
         address,
         creator: creatorId
     })
@@ -59,10 +66,12 @@ const createPlace = async (req, res, next) => {
         user = await User.findById(creatorId)
     } catch (err) {
         const error = new HttpError('Creating place failed try again', 500)
+        await cloudinary.uploader.destroy(req.file.filename)
         return next(error)
     }
     if (!user) {
         const error = new HttpError('Cannot find user for provided id', 404)
+        await cloudinary.uploader.destroy(req.file.filename)
         return next(error)
     }
 
@@ -77,6 +86,7 @@ const createPlace = async (req, res, next) => {
     } catch (err) {
         console.log(err)
         const error = new HttpError('Creating place cannot failed try again', 500)
+        await cloudinary.uploader.destroy(req.file.filename)
         return next(error)
     }
 
@@ -91,13 +101,13 @@ const updatePlace = async (req, res, next) => {
         return next(error)
     }
 
-    const { title, description, image, address } = req.body
+    const { title, description, address } = req.body
     const placeId = req.params.placeId
 
     let updatedPlace
 
     try {
-        updatedPlace = await Place.findByIdAndUpdate(placeId, { title, description, image, address })
+        updatedPlace = await Place.findByIdAndUpdate(placeId, { title, description, address })
     } catch (err) {
         const error = new HttpError('Place does not exist for this id in database', 404)
         return next(error)
@@ -127,8 +137,10 @@ const deletePlace = async (req, res, next) => {
         return next(error)
     }
     try {
+        console.log(place)
         await User.findByIdAndUpdate(place.creator, { $pull: { places: placeId } });
         await place.remove()
+        await cloudinary.uploader.destroy(place.image.filename)
     } catch (err) {
         const error = new HttpError('Error deleting place for this id', 404)
         return next(error)

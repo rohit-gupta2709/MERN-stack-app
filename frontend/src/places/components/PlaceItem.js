@@ -6,13 +6,10 @@ import { AuthContext } from '../../context/authContext'
 import { useHttpHook } from '../../Components/Hooks/HttpHook'
 import Loader from '../../Components/UIElements/Loader'
 import ErrorModal from '../../Components/UIElements/ErrorModal'
-// import { useHistory } from 'react-router-dom'
 
 const PlaceItem = ({ place, deletePlace }) => {
 
     const auth = useContext(AuthContext)
-
-    // const history = useHistory()
 
     const [show, setShow] = useState(false);
 
@@ -28,10 +25,10 @@ const PlaceItem = ({ place, deletePlace }) => {
                 'DELETE'
             )
             deletePlace(place._id)
-            // history.replace('/' + auth.userId + '/places')
         } catch (err) { }
 
     }
+    console.log(place)
     return (
         <>
             {loading && (
@@ -41,7 +38,7 @@ const PlaceItem = ({ place, deletePlace }) => {
             )}
             {error && <ErrorModal message={error} changeError={clearError} />}
             <div className="card place-item">
-                <img className="card-img-top" src={place.image} alt={place.title} />
+                <img className="card-img-top" src={place.image.url} alt={place.title} />
                 <div className="card-body">
                     <h5 className="card-title">{place.title}</h5>
                     <p className="card-text">{place.description}</p>
