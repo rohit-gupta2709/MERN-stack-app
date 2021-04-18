@@ -118,7 +118,7 @@ const updatePlace = async (req, res, next) => {
         return next(error)
     }
 
-    if (updatedPlace.creator.toString() !== req.userData) {
+    if (updatedPlace.creator.toString() !== req.userData.userId) {
         const error = new HttpError('not authorized ', 401)
         return next(error)
     }
@@ -145,7 +145,7 @@ const deletePlace = async (req, res, next) => {
         const error = new HttpError('Place does not exist for this id', 404)
         return next(error)
     }
-    if (place.creator.toString() !== req.userData) {
+    if (place.creator.toString() !== req.userData.userId) {
         const error = new HttpError('not authorized ', 401)
         return next(error)
     }

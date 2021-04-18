@@ -133,7 +133,7 @@ const login = async (req, res, next) => {
         email: existingUser.email,
         token: token
     })
-    res.status(201).json({ message: 'logged in' })
+    // res.status(201).json({ message: 'logged in' })
 }
 
 module.exports = { getUsers, signUp, login }
